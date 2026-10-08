@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: '23 */6 * * *'
   workflow_dispatch:
+    inputs:
+      ips:
+        description: 'Comma-separated pre-selected IPs (from local probe); empty = auto fetch'
+        required: false
+        default: ''
 
 jobs:
   push:
@@ -25,4 +30,5 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
           CF_DNS_NAME: ${{ secrets.CF_DNS_NAME }}
+          INPUT_IPS: ${{ inputs.ips }}
         run: python yxpush.py

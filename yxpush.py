@@ -80,11 +80,16 @@ def main():
         print("错误: 缺少 CF_API_TOKEN / CF_ZONE_ID / CF_DNS_NAME")
         sys.exit(1)
 
-    ips = fetch_best_ips()
-    if not ips:
-        print("错误: 所有源都拿不到优选 IP")
-        sys.exit(1)
-    ips = ips[:MAX_RECORDS]
+    ips_env = os.environ.get("INPUT_IPS", "").strip()
+    if ips_env:
+        ips = [x.strip() for x in ips_env.split(",") if x.strip()][:MAX_RECORDS]
+        print(f"使用本地实测预选 IP: {', '.join(ips)}")
+    else:
+        ips = fetch_best_ips()
+        if not ips:
+            print("错误: 所有源都拿不到优选 IP")
+            sys.exit(1)
+        ips = ips[:MAX_RECORDS]
 
     records = api(
         "GET",
